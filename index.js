@@ -29,6 +29,13 @@ io.on("connection", socket => {
     }
   });
 
+  // get new chat message
+  socket.on("chatMessage", ({ name, room, input }) => {
+    AllRooms.pushMessage(name, room, input);
+    const messages = AllRooms.getAllMessages(room);
+    io.in(room).emit("updateMessage", messages);
+  });
+
   // disconnect room
   socket.on("disonnect", () => {
     console.log("user disconnect");
