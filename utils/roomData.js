@@ -14,6 +14,18 @@ class roomData {
     this.gameData = new gameData();
   }
 
+  // game start
+  startGame() {
+    console.log("start game");
+    setInterval(() => {
+      this.gameData.timer++;
+    }, 1000);
+  }
+
+  getTimer() {
+    return this.gameData.timer;
+  }
+
   addUser(user) {
     // check if user exists already!
     const find = this.users.find(
@@ -32,6 +44,13 @@ class roomData {
     console.log("remove user");
     let removeUserIndex = this.users.findIndex(i => {
       return i.socketId === user.socketId;
+    });
+    this.users.splice(removeUserIndex, 1);
+  }
+
+  disconnectUser(user) {
+    let removeUserIndex = this.users.findIndex(i => {
+      return i.id === user.googleId;
     });
     this.users.splice(removeUserIndex, 1);
   }

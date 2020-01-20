@@ -27,12 +27,30 @@ class AllRoomsGenerator {
 
   pushMessage(name, roomName, input) {
     const find = this.rooms.find(i => i.roomId === roomName);
+
+    if (input === "/start") {
+      this.startGameForRoom(roomName);
+    }
+    if (input === "/time") {
+      this.getTimeForRoom(roomName);
+    }
+
     if (find) find.addMessage(name, input);
   }
 
   getAllMessages(roomName) {
     const find = this.rooms.find(i => i.roomId === roomName);
     if (find) return find.getAllMessages();
+  }
+
+  getTimeForRoom(roomName) {
+    const find = this.rooms.find(i => i.roomId === roomName);
+    if (find) return find.getTimer();
+  }
+
+  startGameForRoom(roomName) {
+    const find = this.rooms.find(i => i.roomId === roomName);
+    if (find) return find.startGame();
   }
 
   resetRooms() {
@@ -44,6 +62,14 @@ class AllRoomsGenerator {
     for (let room of this.rooms) {
       const user = room.users.find(i => i.user.socketId === socketId);
       if (user) room.removeUser(user);
+    }
+  }
+
+  disconnectUser(user) {
+    this.clearEmptyRooms();
+    for (let room of this.rooms) {
+      const find = room.users.find(i => user.googleId === i.id);
+      if (find) room.disconnectUser(user);
     }
   }
 
