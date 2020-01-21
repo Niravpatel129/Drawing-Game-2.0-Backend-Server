@@ -86,11 +86,7 @@ class roomData {
 
     if (!find) {
       this.users.push({ user, points: 0, id: user.googleUserInfo.googleId });
-      this.addMessage(
-        "[Admin]",
-        user.googleUserInfo.name,
-        "Has joined the room"
-      );
+
       return true;
     } else {
       return false;
