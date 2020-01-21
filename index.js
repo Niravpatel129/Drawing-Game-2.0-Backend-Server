@@ -34,14 +34,10 @@ io.on("connection", socket => {
       const messages = AllRooms.getAllMessages(room);
       AllRooms.newRoom(room); // make a new room
       // find room and add user
-      const isNewUser = AllRooms.findUserAndAddToRoom(room, {
+      AllRooms.findUserAndAddToRoom(room, {
         googleUserInfo,
         socketId: socket
       });
-
-      if (!googleUserInfo) {
-        callback("You need to login first, GUEST MODE IS NOT ENABLED YET!");
-      }
 
       if (error) {
         callback("Error!");
@@ -66,6 +62,10 @@ io.on("connection", socket => {
   });
 
   socket.on("gameStart", room => {
+    io.of("/")
+      .to(room)
+      .emit("gameStart", room);
+
     AllRooms.gameStart(room);
   });
 
