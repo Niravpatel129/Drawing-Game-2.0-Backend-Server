@@ -30,11 +30,19 @@ class AllRoomsGenerator {
     if (input === "/start") {
       this.startGameForRoom(roomName);
     }
+    if (input === "/stop") {
+      find.stopGame();
+    }
     if (input === "/time") {
       this.getTimeForRoom(roomName);
     }
 
     if (find) find.addMessage(name, input);
+  }
+
+  guessedCorrect(user, roomName) {
+    const find = this.rooms.find(i => i.roomId === roomName);
+    if (find) return find.guessedCorrect(user);
   }
 
   getAllMessages(roomName) {

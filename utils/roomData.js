@@ -1,4 +1,5 @@
 const timeLimit = 25;
+let timer;
 
 class gameData {
   constructor() {
@@ -10,6 +11,7 @@ class gameData {
     this.word = "Shirt";
     this.roundPlayers = [];
     this.roundEnded = false;
+    this.usersWhoGussedCorrect = [];
   }
 }
 
@@ -21,29 +23,54 @@ class roomData {
     this.gameData = new gameData();
   }
 
+  guessedCorrect(user) {
+    const find = this.gameData.usersWhoGussedCorrect.find(i => {
+      return i === user.googleId;
+    });
+
+    if (!find) {
+      this.gameData.usersWhoGussedCorrect.push(user.googleId);
+      const addPoints = this.users.find(i => {
+        return user.googleId === i.user.googleUserInfo.googleId;
+      });
+      addPoints.points += 10;
+
+      if (
+        this.gameData.usersWhoGussedCorrect.length ===
+        this.users.length - 1
+      ) {
+        this.nextDrawer();
+      }
+    }
+  }
+
   // game start
   startGame() {
-    console.log("start game");
     if (!this.gameData.gameStarted) {
       this.gameData.gameStarted = true;
       this.addRound();
     }
   }
 
+  stopGame() {
+    this.controlTimer("stop");
+  }
+
   controlTimer(mode) {
     if (mode === "start") {
-      const timerInterval = setInterval(() => {
+      timer = setInterval(() => {
         this.gameData.timer--;
         if (this.gameData.timer < 0 || mode === "stop") {
-          clearInterval(timerInterval);
+          clearInterval(timer);
           this.nextDrawer();
         }
       }, 1000);
+    } else {
+      clearInterval(timer);
     }
   }
 
   setDrawerList() {
-    console.log("init draw list");
     if (this.users.length <= 1) {
       this.endGame();
     }
@@ -54,12 +81,14 @@ class roomData {
   }
 
   nextDrawer() {
+    this.gameData.usersWhoGussedCorrect = [];
     if (this.gameData.roundPlayers.length > 0) {
       this.gameData.roundEnded = true;
-      console.log(this.gameData.roundPlayers.length, "drawers left");
+      this.setNewDrawWord();
       this.gameData.drawer = this.gameData.roundPlayers[0];
       this.gameData.roundPlayers.splice(0, 1); // remove the first guy because he is our drawer :D
       this.gameData.timer = timeLimit;
+      this.controlTimer("stop");
       this.controlTimer("start");
     } else {
       this.addRound();
@@ -67,16 +96,9 @@ class roomData {
   }
 
   addRound() {
-    console.log("We are on round", this.gameData.round);
-    if (this.gameData.round >= 3) {
+    if (this.gameData.round >= 3 || this.users.length <= 1) {
       this.endGame();
     } else {
-      console.log("Everyone for this round has drawn!");
-
-      if (this.users.length <= 1) {
-        this.endGame();
-      }
-
       this.gameData.round++;
       this.setDrawerList();
       this.nextDrawer();
@@ -96,7 +118,7 @@ class roomData {
   }
 
   endGame() {
-    console.log("WIP end game");
+    console.log("END");
     this.gameData.gameStarted = false;
     this.gameData = new gameData();
     this.controlTimer("stop");
@@ -127,7 +149,6 @@ class roomData {
   }
 
   removeUser(user) {
-    console.log("remove user");
     let removeUserIndex = this.users.findIndex(i => {
       return i.user.socketId === user.user.socketId;
     });
