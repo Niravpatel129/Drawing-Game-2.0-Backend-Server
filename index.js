@@ -11,8 +11,6 @@ const { AllRoomsGenerator } = require("./utils/AllRoomsGenerator");
 
 const AllRooms = new AllRoomsGenerator();
 
-let globalSocket;
-
 server.listen(PORT, () => {
   console.log("Server started on port", PORT);
 });
@@ -20,8 +18,6 @@ server.listen(PORT, () => {
 app.use(router);
 
 io.on("connection", socket => {
-  globalSocket = socket;
-
   socket.emit("connected");
 
   // join room
@@ -121,6 +117,9 @@ const timer = setInterval(() => {
       "updateMessage",
       AllRooms.getAllMessages(room.roomId)
     );
+    if (room.users.length <= 1 && room.gameData.gameStarted) {
+      room.endGame();
+    }
 
     if (room.gameData.roundEnded) {
       room.gameData.roundEnded = false;
