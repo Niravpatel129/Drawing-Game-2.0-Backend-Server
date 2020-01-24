@@ -1,6 +1,10 @@
 const timeLimit = 125;
 let timer;
 
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 class gameData {
   constructor() {
     this.gameStarted = false;
@@ -8,7 +12,7 @@ class gameData {
     this.scores = [];
     this.timer = timeLimit;
     this.drawer = "";
-    this.word = "Shirt";
+    this.word = "";
     this.roundPlayers = [];
     this.roundEnded = false;
     this.usersWhoGussedCorrect = [];
@@ -83,7 +87,23 @@ class roomData {
   nextDrawer() {
     this.gameData.usersWhoGussedCorrect = [];
     if (this.gameData.roundPlayers.length > 0) {
+      if (this.gameData.word) {
+        setTimeout(() => {
+          if (this.gameData.drawer.user) {
+            this.addMessage(
+              "Admin",
+              capitalizeFirstLetter(
+                this.gameData.drawer.user.googleUserInfo.name
+              ) +
+                "'s Turn ended: the word was: " +
+                capitalizeFirstLetter(this.gameData.word)
+            );
+          }
+        }, 500);
+      }
+
       this.gameData.roundEnded = true;
+
       setTimeout(() => {
         this.setNewDrawWord();
         this.gameData.drawer = this.gameData.roundPlayers[0];
@@ -112,7 +132,29 @@ class roomData {
   }
 
   setNewDrawWord() {
-    const words = ["Rock", "Paper", "Scissors", "Dog", "Tom", "Jerry"];
+    const words = [
+      "Box",
+      "Paper",
+      "Scissors",
+      "Dog",
+      "Brush",
+      "Backpack",
+      "Batteries",
+      "Calender",
+      "Match",
+      "Lipstick",
+      "Shark",
+      "fish",
+      "notepad",
+      "televison",
+      "headset",
+      "pen",
+      "ticket",
+      "water",
+      "beach",
+      "dish",
+      "photo"
+    ];
 
     const number = Math.floor(Math.random() * words.length);
 
