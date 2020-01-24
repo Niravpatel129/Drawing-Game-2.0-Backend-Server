@@ -99,10 +99,9 @@ class roomData {
                 capitalizeFirstLetter(this.gameData.word)
             );
           }
-        }, 500);
+          this.gameData.roundEnded = true;
+        }, 2500);
       }
-
-      this.gameData.roundEnded = true;
 
       setTimeout(() => {
         this.setNewDrawWord();
@@ -158,7 +157,11 @@ class roomData {
 
     const number = Math.floor(Math.random() * words.length);
 
-    this.gameData.word = words[number];
+    if (words[number] !== this.gameData.word) {
+      this.gameData.word = words[number];
+    } else {
+      this.setNewDrawWord();
+    }
   }
 
   endGame() {
